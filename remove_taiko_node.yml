@@ -1,0 +1,39 @@
+---
+- name: Uninstall Taiko Node
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Stop Taiko node service
+      ansible.builtin.systemd:
+        name: taiko-node
+        state: stopped
+        enabled: no
+        daemon_reload: yes
+
+    - name: Disable Taiko node service
+      ansible.builtin.systemd:
+        name: taiko-node
+        enabled: no
+
+    - name: Remove Taiko node service file
+      ansible.builtin.file:
+        path: "/etc/systemd/system/taiko-node.service"
+        state: absent
+
+    - name: Reload systemd
+      ansible.builtin.systemd:
+        daemon_reload: yes
+
+    - name: Remove Taiko node project directory
+      ansible.builtin.file:
+        path: "~/taiko-node"
+        state: absent
+
+    - name: Remove Docker containers and volumes associated with the Taiko node
+      ansible.builtin.shell: |
+        docker compose -f ~/taiko-node/docker-compose.yml down --volumes
+      args:
+        executable: /bin/bash
+        removes: "~/taiko-node/docker-compose.yml"
+      ignore_errors: yes
+

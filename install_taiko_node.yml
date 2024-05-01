@@ -1,0 +1,46 @@
+---
+- name: Install Taiko Node
+  hosts: localhost
+  become: true
+  vars_prompt:
+    - name: l1_endpoint_http
+      prompt: "Enter your L1 Holesky HTTP endpoint"
+      private: no
+    - name: l1_endpoint_ws
+      prompt: "Enter your L1 Holesky WebSocket endpoint"
+      private: no
+    - name: proposer_private_key
+      prompt: "Enter your dedicated Taiko Metamask account's private key"
+      private: no
+
+  tasks:
+    - name: Update and install necessary packages
+      ansible.builtin.shell: |
+        sudo apt update && sudo apt upgrade -y
+        sudo apt install docker-ce docker-compose git -y
+
+    - name: Clone Taiko project repository
+      ansible.builtin.git:
+        repo: 'https://github.com/taikoxyz/simple-taiko-node.git'
+        dest: '~/taiko-node'
+        version: 'main'
+        force: yes
+
+    - name: Setup .env file from template
+      ansible.builtin.template:
+        src: taiko-env.j2
+        dest: '~/taiko-node/.env'
+
+    - name: Launch Taiko node as a service
+      ansible.builtin.template:
+        src: taiko-node.service.j2
+        dest: '/etc/systemd/system/taiko-node.service'
+
+    - name: Reload systemd and start Taiko node service
+      ansible.builtin.systemd:
+        name: taiko-node
+        state: stopped
+        enabled: yes
+        daemon_reload: yes
+
+
