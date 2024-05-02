@@ -7,7 +7,7 @@ Type=simple
 User=root
 WorkingDirectory=/root/taiko-node
 ExecStart=/usr/local/bin/docker-compose -f docker-compose.yml --profile l2_execution_engine up --remove-orphans
-ExecStop=/usr/local/bin/docker-compose -f docker-compose.yml --profile l2_execution_engine dow
+ExecStop=/usr/local/bin/docker-compose -f docker-compose.yml --profile l2_execution_engine down
 Restart=always
 
 [Install]
