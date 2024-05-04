@@ -64,13 +64,5 @@
       become_user: ethuser
       become_method: sudo
 
-    - name: Correct geth.yml file to avoid syntax errors
-      lineinfile:
-        path: '/home/ethuser/eth-docker/geth.yml'
-        regexp: '^\s+-\s+BUILD_TARGET=.*$'
-        line: "      - BUILD_TARGET=$${GETH_SRC_BUILD_TARGET:-'$$(git describe --tags $$(git rev-list --tags --max-count=1))'}"
-        state: present
-      become: yes
-      become_user: ethuser
 
 
