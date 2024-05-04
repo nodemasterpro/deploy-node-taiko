@@ -26,6 +26,11 @@
         version: 'main'
         force: yes
 
+    - name: Get public IP
+      ansible.builtin.shell: curl http://checkip.amazonaws.com
+      register: beacon_node_ip
+      changed_when: false      
+
     - name: Setup .env file from template
       ansible.builtin.template:
         src: taiko-env.j2
