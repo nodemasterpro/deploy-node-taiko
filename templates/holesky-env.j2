@@ -1,0 +1,309 @@
+# The settings for eth-docker are in .env, use "nano .env". Don't edit default.env itself.
+# Client choice: See https://eth-docker.net/Usage/Advanced for available options
+COMPOSE_FILE=lighthouse-cl-only.yml:geth.yml:grafana.yml:grafana-shared.yml:el-shared.yml:cl-shared.yml
+# Set the ETH address that priority fees and MEV rewards should be sent to
+FEE_RECIPIENT={{ fee_recipient }}
+# Decide whether to connect the CL to Flashbots MEV boost, and configure the VC to register with it.
+# Set MEV_BOOST to "true" for MEV boost, or any other value including empty for not using MEV boost.
+# If "true" and used with a CL, it also requires :mev-boost.yml in COMPOSE_FILE
+MEV_BOOST=false
+# For relay information, please see https://ethstaker.cc/mev-relay-list/
+MEV_RELAYS=
+# Set a minimum MEV bid (e.g. 0.05), used by mev-boost.yml. If empty, no minimum is used.
+MEV_MIN_BID=
+# Graffiti to use for validator
+GRAFFITI=🐡s in spaaaace
+# Set to true to use the client's default Graffiti. Overrides GRAFFITI
+DEFAULT_GRAFFITI=false
+# Merged network to use. If using main net, set to mainnet.
+NETWORK=holesky
+# CL rapid sync via initial state/checkpoint. Please use one from https://eth-clients.github.io/checkpoint-sync-endpoints/
+# Alternatively, use an already synced CL that you trust. No trailing / for Teku, please.
+RAPID_SYNC_URL=https://holesky.beaconstate.info
+# Doppelganger protection - set to "true" to enable. This will intentionally skip two epochs on client start, and attempt to
+# detect duplicates of the validator(s) already running. Note this is NOT foolproof, though it can be useful when moving a node
+DOPPELGANGER=false
+# Auto-pruning Nethermind is usually safe. Set this to true to enable auto-pruning, and to anything else to disable it
+AUTOPRUNE_NM=true
+# Whether to use web3signer for validator keys. Setting this to "true" also requires web3signer.yml in COMPOSE_FILE
+WEB3SIGNER=false
+# Whether to explicitly enable IPv6 P2P. See https://ethdocker.com/Support/ipv6
+# Needs to be false or true for Eth Docker to work
+IPV6=false
+# Directory to keep ancient data. In use for Geth, optional.
+# If you use this, make sure to chown the directory to uid 10001
+ANCIENT_DIR=
+
+# Promtail logs label, something unique like the server name
+LOGS_LABEL=eth-docker
+
+# Secure web proxy - advanced use, please see instructions
+DOMAIN=example.com
+ACME_EMAIL=user@example.com
+CF_DNS_API_TOKEN=SECRETTOKEN
+CF_ZONE_API_TOKEN=
+CF_ZONE_ID=
+AWS_PROFILE=myprofile
+AWS_HOSTED_ZONE_ID=myzoneid
+GRAFANA_HOST=grafana
+SIREN_HOST=siren
+PROM_HOST=prometheus
+PRYSM_HOST=prysm
+EE_HOST=ee
+EL_HOST=el
+EL_LB=el-lb
+EL_WS_HOST=elws
+EL_WS_LB=elws-lb
+CL_HOST=cl
+CL_LB=cl-lb
+VC_HOST=vc
+DDNS_SUBDOMAIN=grafana
+DDNS_PROXY=true
+
+# Some clients suggest adjusting to higher (or lower) peer count. Adjust here, per client
+# Nimbus peer count should not be set below 70. CL_MIN_PEER_COUNT is used for Teku only.
+CL_MAX_PEER_COUNT=
+CL_MIN_PEER_COUNT=
+# Maximum active peers for EL.
+EL_MAX_PEER_COUNT=
+
+# Beaconcha.in API key for sending client stats. Automatic for Lodestar, Lighthouse, and Teku, or with prysm-stats.yml / nimbus-stats.yml
+# Specify as just the API key as found at https://beaconcha.in/user/settings#api, and give the machine name separately
+BEACON_STATS_API=
+BEACON_STATS_MACHINE=
+
+# IP of the host you want to use in Docker (in case host has several IPs)
+HOST_IP=
+# IP address to use when host-mapping a port through *-shared.yml. Set this to 127.0.0.1 to restrict the share to localhost
+SHARE_IP=
+
+# P2P ports you will forward to your staking node. Adjust here if you are
+# going to use something other than defaults.
+EL_P2P_PORT=30303
+CL_P2P_PORT=9010
+PRYSM_PORT=9010
+PRYSM_UDP_PORT=9010
+CL_QUIC_PORT=9001
+# Local grafana dashboard port. Do not expose to Internet, it is insecure http
+GRAFANA_PORT=3000
+# Local Siren UI port. Do not expose to Internet, it is insecure http
+SIREN_PORT=8080
+# Prometheus port used when exposing directly on host; used for federation
+PROMETHEUS_PORT=9090
+# Local key manager port. Reachable only via localhost. Also doubles as Prysm web port
+KEY_API_PORT=7500
+# Secure web proxy port, 443 and 80 are great defaults
+TRAEFIK_WEB_PORT=443
+TRAEFIK_WEB_HTTP_PORT=80
+# NOTE: If you configure EL_RPC_PORT or EL_WS_PORT then you should also add el-shared.yml to COMPOSE_FILE
+# Execution client RPC port, important when using el-shared.yml. Insecure, do not expose to Internet.
+# For Erigon, this is also the WS port
+EL_RPC_PORT=8545
+# Execution client WS port. Insecure, do not expose to Internet.
+# Note that for Erigon, this needs to match EL_RPC_PORT *if* you use traefik, and only then
+# Do not change it for Erigon and el-shared.yml
+EL_WS_PORT=8546
+# Erigon's torrent port. Don't make this 42070, that'll fail
+ERIGON_TORRENT_PORT=42069
+# Erigon's second and third P2P port, used for multiple eth/xx P2P protocols
+ERIGON_P2P_PORT_2=30304
+ERIGON_P2P_PORT_3=30305
+# SSV Node ports
+SSV_P2P_PORT=13001
+SSV_P2P_PORT_UDP=12001
+# Engine port. Only for distributed setups, this should otherwise be left alone
+EE_PORT=8551
+# Consensus layer REST port. Only for distributed setups, this should otherwise be left alone
+CL_REST_PORT=5052
+
+# Additional parameters for the EL client. For example, on low-memory machines,
+# you may want to use it to lower Geth cache, or to increase it on high-memory machines
+#EL_EXTRAS=--cache=256
+EL_EXTRAS=
+# Additional parameters for the CL client.
+CL_EXTRAS=
+# Additional parameters for the validator client.
+VC_EXTRAS=
+
+# Heap for Besu and Teku, both written in Java. Sets JAVA_OPTS to this value, for example TEKU_HEAP=-Xmx8g to set it
+# to 8g. If left empty, the defaults in besu.yml and teku.yml are used.
+BESU_HEAP=
+TEKU_HEAP=
+# Heap for Lodestar. Sets NODE_OPTIONS to this value, for example --max-old-space-size=8192.
+# If left empty, the default in lodestar.yml will be used.
+LODESTAR_HEAP=
+
+# Set this to true to sync an archive node instead of pruned for both CL
+# and EL. Caution that this may a) require a fresh sync and b) will
+# use a lot of disk - in the case of Geth >12TB, for example.
+ARCHIVE_NODE=false
+
+# If you want debug logs, set this to debug instead of info
+LOG_LEVEL=info
+
+# JWT secret for CL:EL connection. This is created automatically by default.
+# If specified manually here, this could be used to split CL and EL to different
+# machines. Do not use unless you have a distributed setup like that.
+JWT_SECRET=
+# If you run a distributed setup, setting this to DISTRIBUTED=true
+# will stop the nag screens during ./ethd update
+DISTRIBUTED=
+# Authenticated execution client endpoint. This default uses the execution node container.
+EL_NODE=http://execution:8551
+# Consensus client address. This could be comma-separated for Lighthouse or Teku VC clients, with failover,
+# or could just be a remote consensus client URL for "validator only" setups.
+# For Nimbus VC client, put the first beacon node here, and use VC_EXTRAS for additional.
+CL_NODE=http://consensus:5052
+# MEV-boost address. This would only be changed for Vouch setups
+MEV_NODE=http://mev-boost:18550
+
+# You can set specific version targets and choose binary or compiled from source builds below,
+# via "Dockerfile.binary" or "Dockerfile.source"
+# These settings are only migrated when running "./ethd update --keep-targets"
+# The default source build targets build from the latest github tag
+
+# Eth Docker updates its code to latest by default.
+# Set a Github tag here to pin it to a version. Supported from v2.3.9.
+ETH_DOCKER_TAG=
+
+# SSV
+SSV_NODE_TAG=latest
+
+# MEV-Boost
+# SRC build target can be a tag, a branch, or a pr as "pr-ID"
+MEV_SRC_BUILD_TARGET=develop
+MEV_SRC_REPO=https://github.com/flashbots/mev-boost
+MEV_DOCKER_TAG=latest
+MEV_DOCKER_REPO=flashbots/mev-boost
+MEV_DOCKERFILE=Dockerfile.binary
+
+# Nimbus
+# SRC build target can be a tag, a branch, or a pr as "pr-ID"
+NIM_SRC_BUILD_TARGET='$$(git describe --tags $(git rev-list --tags --max-count=1))'
+NIM_SRC_REPO=https://github.com/status-im/nimbus-eth2
+NIM_DOCKER_TAG=multiarch-latest
+NIM_DOCKER_VC_TAG=multiarch-latest
+NIM_DOCKER_REPO=statusim/nimbus-eth2
+NIM_DOCKER_VC_REPO=statusim/nimbus-validator-client
+NIM_DOCKERFILE=Dockerfile.binary
+
+# Teku
+# SRC build target can be a tag, a branch, or a pr as "pr-ID"
+TEKU_SRC_BUILD_TARGET='$$(git describe --tags $(git rev-list --tags --max-count=1))'
+TEKU_SRC_REPO=https://github.com/ConsenSys/teku
+TEKU_DOCKER_TAG=latest
+TEKU_DOCKER_REPO=consensys/teku
+TEKU_DOCKERFILE=Dockerfile.binary
+
+# Lighthouse
+# SRC build target can be a tag, a branch, or a pr as "pr-ID"
+LH_SRC_BUILD_TARGET=stable
+LH_SRC_REPO=https://github.com/sigp/lighthouse
+# If Lighthouse terminates with a SIGILL, make this "latest"
+LH_DOCKER_TAG=latest-modern
+LH_DOCKER_REPO=sigp/lighthouse
+LH_DOCKERFILE=Dockerfile.binary
+
+# Lighthouse Siren
+SIREN_DOCKER_TAG=latest
+SIREN_DOCKER_REPO=sigmaprime/siren
+
+# Prysm
+# SRC build target can be a tag, a branch, or a pr as "pr-ID"
+PRYSM_SRC_BUILD_TARGET='$$(git describe --tags $(git rev-list --tags --max-count=1))'
+PRYSM_SRC_REPO=https://github.com/prysmaticlabs/prysm
+PRYSM_DOCKER_TAG=stable
+PRYSM_DOCKER_VC_TAG=stable
+PRYSM_DOCKER_CTL_TAG=latest
+PRYSM_DOCKER_REPO=gcr.io/prysmaticlabs/prysm/beacon-chain
+PRYSM_DOCKER_VC_REPO=gcr.io/prysmaticlabs/prysm/validator
+PRYSM_DOCKER_CTL_REPO=gcr.io/prysmaticlabs/prysm/cmd/prysmctl
+PRYSM_DOCKERFILE=Dockerfile.binary
+
+# Lodestar
+# SRC build target can be a tag, a branch, or a pr as "pr-ID"
+LS_SRC_BUILD_TARGET='$$(git describe --tags $(git rev-list --tags --max-count=1))'
+LS_SRC_REPO=https://github.com/ChainSafe/lodestar
+LS_DOCKER_TAG=latest
+LS_DOCKER_REPO=chainsafe/lodestar
+LS_DOCKERFILE=Dockerfile.binary
+
+# Grandine
+# SRC build target can be a tag, a branch, or a pr as "pr-ID"
+GRANDINE_SRC_BUILD_TARGET=master
+GRANDINE_SRC_REPO=https://github.com/grandinetech/grandine
+GRANDINE_DOCKER_TAG=latest
+GRANDINE_DOCKER_REPO=sifrai/grandine
+GRANDINE_DOCKERFILE=Dockerfile.binary
+
+# Web3Signer
+W3S_DOCKER_TAG=latest
+W3S_DOCKER_REPO=consensys/web3signer
+PG_DOCKER_TAG=16-bookworm
+
+# Besu
+# SRC build target can be a tag, a branch, or a pr as "pr-ID"
+BESU_SRC_BUILD_TARGET='$$(git describe --tags $(git rev-list --tags --max-count=1))'
+BESU_SRC_REPO=https://github.com/hyperledger/besu
+BESU_DOCKER_TAG=latest
+BESU_DOCKER_REPO=hyperledger/besu
+BESU_DOCKERFILE=Dockerfile.binary
+
+# Erigon
+# SRC build target can be a tag, a branch, or a pr as "pr-ID"
+ERIGON_SRC_BUILD_TARGET='$$(git describe --tags $(git rev-list --tags --max-count=1))'
+ERIGON_SRC_REPO=https://github.com/ledgerwatch/erigon
+#ERIGON_DOCKER_TAG=stable # stable tag was abandoned by Erigon team, set a tag manually
+ERIGON_DOCKER_TAG=v2.59.3
+ERIGON_DOCKER_REPO=thorax/erigon
+ERIGON_DOCKERFILE=Dockerfile.binary
+
+# Nethermind
+# SRC build target can be a tag, a branch, or a pr as "pr-ID"
+NM_SRC_BUILD_TARGET='$$(git tag --sort=-committerdate | grep -E "^[0-9]+[.][0-9]+[.][0-9]+$" | head -1)'
+NM_SRC_REPO=https://github.com/NethermindEth/nethermind
+NM_DOCKER_TAG=latest
+NM_DOCKER_REPO=nethermind/nethermind
+NM_DOCKERFILE=Dockerfile.binary
+
+# Go-Ethereum aka Geth
+# SRC build target can be a tag, a branch, or a pr as "pr-ID"
+GETH_SRC_BUILD_TARGET='$(git describe --tags $(git rev-list --tags --max-count=1))'
+GETH_SRC_REPO=https://github.com/ethereum/go-ethereum
+GETH_DOCKER_TAG=stable
+GETH_DOCKER_REPO=ethereum/client-go
+GETH_DOCKERFILE=Dockerfile.binary
+
+# Nimbus EL
+# SRC build target can be a tag, a branch, or a pr as "pr-ID"
+NIMEL_SRC_BUILD_TARGET=master
+NIMEL_SRC_REPO=https://github.com/status-im/nimbus-eth1
+NIMEL_DOCKER_TAG=nonesuch
+NIMEL_DOCKER_REPO=nonesuch
+NIMEL_DOCKERFILE=Dockerfile.source
+
+# Reth
+# SRC build target can be a tag, a branch, or a pr as "pr-ID"
+RETH_SRC_BUILD_TARGET=main
+RETH_SRC_REPO=https://github.com/paradigmxyz/reth
+RETH_DOCKER_TAG=latest
+RETH_DOCKER_REPO=ghcr.io/paradigmxyz/reth
+RETH_DOCKERFILE=Dockerfile.binary
+
+# staking-deposit-cli
+# SRC build target can be a tag, a branch, or a pr as "pr-ID"
+DEPCLI_SRC_BUILD_TARGET='$$(git describe --tags $(git rev-list --tags --max-count=1))'
+DEPCLI_SRC_REPO=https://github.com/ethereum/staking-deposit-cli
+# Does not (yet?) exist on Docker hub
+DEPCLI_DOCKER_TAG=nonesuch
+
+# traefik and ddns-updater
+TRAEFIK_TAG=v3.0
+DDNS_TAG=v2
+
+# For the Node Dashboard, define a regex of mount points to ignore for the diskspace check.
+NODE_EXPORTER_IGNORE_MOUNT_REGEX='^/(dev|proc|sys|run|var/lib/docker/.+)($|/)'
+
+# Used by ethd update - please do not adjust
+ENV_VERSION=10
+

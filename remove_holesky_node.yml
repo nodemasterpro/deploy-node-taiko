@@ -1,0 +1,35 @@
+---
+- name: Uninstall Holesky Node
+  hosts: localhost
+  become: true
+  tasks:
+    
+    - name: Stop and remove all Docker containers managed by ethuser
+      ansible.builtin.shell: |
+        su - ethuser -c 'cd ~/eth-docker && ./ethd down --volumes'
+      args:
+        executable: /bin/bash
+      ignore_errors: yes
+
+    - name: Remove Docker volumes associated with the Holesky node (optional)
+      ansible.builtin.shell: |
+        docker volume rm $(docker volume ls -q -f "name=eth-docker_*")
+      ignore_errors: true
+
+    - name: Remove Holesky node project directory
+      ansible.builtin.file:
+        path: "/home/ethuser/eth-docker"
+        state: absent
+
+    - name: Remove ethuser from the system
+      user:
+        name: ethuser
+        state: absent
+        remove: yes
+
+    - name: Remove ethuser from sudoers
+      lineinfile:
+        path: /etc/sudoers
+        state: absent
+        regexp: '^ethuser ALL=\(ALL\) NOPASSWD:ALL$'
+        validate: 'visudo -cf %s'

@@ -27,6 +27,13 @@ git clone https://github.com/taikoxyz/simple-taiko-node.git
 cd simple-taiko-node
 ```
 
+## Installation of the Holesky Node
+Initiate the installation of your Holesky node using this command, entering the necessary network and wallet information when prompted:
+
+```
+ansible-playbook install_holesky_node.yml
+```
+
 ## Installation of the Taiko Node
 Initiate the installation of your Taiko node using this command, entering the necessary network and wallet information when prompted:
 
@@ -58,9 +65,25 @@ Check the synchronization status on the Grafana dashboard at http://<IP_OF_YOUR_
 Once your node is synchronized, retrieve any funds mined during setup from the Holesky faucet and ensure they've arrived in your wallet.
 
 ## Additional Commands
+### Stopping the Holesky Node
+```
+su - ethuser
+cd eth-docker
+./ethd down
+exit
+```
+
 ### Stopping the Taiko Node
 ```
 sudo systemctl stop taiko-node
+```
+
+### Starting the Holesky Node
+```
+su - ethuser
+cd eth-docker
+./ethd up
+exit
 ```
 
 ### Starting the Taiko Node
@@ -69,6 +92,13 @@ sudo systemctl start taiko-node
 ```
 
 ### Removing the Taiko Node
+To completely remove your Holesky node, rerun the playbook with the removal action set:
+
+```
+ansible-playbook remove_holesky_node.yml
+```
+
+
 To completely remove your Taiko node, rerun the playbook with the removal action set:
 
 ```

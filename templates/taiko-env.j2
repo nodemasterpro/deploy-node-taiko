@@ -30,7 +30,7 @@ DISABLE_P2P_SYNC=false
 L1_ENDPOINT_HTTP={{ l1_endpoint_http }}
 L1_ENDPOINT_WS={{ l1_endpoint_ws }}
 # HTTP RPC endpoint of a L1 beacon node.
-L1_BEACON_HTTP=https://ethereum-holesky-beacon-api.publicnode.com
+L1_BEACON_HTTP=http://{{ beacon_node_ip.stdout }}:5052
 
 # REQUIRED FOR PROVER
 # If you are running your Taiko node on a separate server from your sgx prover, please provide the server hosting the taiko node's public IP address here (no slash at the end). 

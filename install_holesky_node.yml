@@ -1,0 +1,74 @@
+- name: Deploy Holesky Node
+  hosts: all
+  become: true
+
+  vars_prompt:
+    - name: fee_recipient
+      prompt: "Enter your wallet address for the FEE_RECIPIENT"
+      private: no
+
+  tasks:
+    - name: Check if Docker is installed
+      command: docker --version
+      register: docker_installed
+      failed_when: docker_installed.rc != 0
+
+    - name: Add non-root user for Docker execution
+      user:
+        name: ethuser
+        group: docker
+        createhome: yes
+        shell: /bin/bash
+        
+
+    - name: Ensure bash configuration files are initialized
+      synchronize:
+        src: /etc/skel/
+        dest: /home/ethuser/
+        delete: no
+        recursive: yes
+      become: true
+      become_user: root
+
+    - name: Adjust permissions for ethuser's home directory
+      file:
+        path: "/home/ethuser"
+        owner: ethuser
+        group: docker
+        recurse: true
+        state: directory  
+    
+    - name: Add ethuser to sudoers
+      lineinfile:
+        path: /etc/sudoers
+        line: 'ethuser ALL=(ALL) NOPASSWD:ALL'
+        validate: 'visudo -cf %s'
+
+    - name: Clone eth-docker repository
+      git:
+        repo: 'https://github.com/eth-educators/eth-docker'
+        dest: '/home/ethuser/eth-docker'
+        clone: yes
+        update: yes
+        force: true
+      become: yes
+      become_user: ethuser
+
+    - name: Set up .env file from Jinja2 template
+      template:
+        src: 'holesky-env.j2'
+        dest: '/home/ethuser/eth-docker/.env'
+      become: yes
+      become_user: ethuser
+      become_method: sudo
+
+    - name: Correct geth.yml file to avoid syntax errors
+      lineinfile:
+        path: '/home/ethuser/eth-docker/geth.yml'
+        regexp: '^\s+-\s+BUILD_TARGET=.*$'
+        line: "      - BUILD_TARGET=$${GETH_SRC_BUILD_TARGET:-'$$(git describe --tags $$(git rev-list --tags --max-count=1))'}"
+        state: present
+      become: yes
+      become_user: ethuser
+
+
