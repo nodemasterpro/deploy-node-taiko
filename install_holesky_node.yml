@@ -46,13 +46,15 @@
 
     - name: Clone eth-docker repository
       git:
-        repo: 'https://github.com/eth-educators/eth-docker'
+        repo: 'https://github.com/eth-educators/eth-docker.git'
         dest: '/home/ethuser/eth-docker'
+        version: 'v2.9.0.0'  # Specify the tag here
         clone: yes
         update: yes
-        force: true
-      become: yes
+        force: yes
+      become: true
       become_user: ethuser
+
 
     - name: Set up .env file from Jinja2 template
       template:
